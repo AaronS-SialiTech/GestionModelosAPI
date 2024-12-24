@@ -10,7 +10,7 @@ const supabaseKey = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 
-
+//El GET permite obtener un listado de todos los usuarios, o los datos de un usuario especificado por Id o nombre
 export async function GET(req: NextRequest) {
     try {
       const { searchParams } = new URL(req.url);
@@ -41,6 +41,8 @@ export async function GET(req: NextRequest) {
     }
 }
 
+
+
 export async function POST(req: NextRequest) {
     try {
       
@@ -51,7 +53,7 @@ export async function POST(req: NextRequest) {
   
       if (!nombre || !email || !fechaCreacion) {
         return NextResponse.json(
-          { error: 'Faltan campos requeridos: nombre, correo y edad son obligatorios.' },
+          { error: 'Faltan campos requeridos' },
           { status: 400 }
         );
       }
@@ -76,6 +78,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  //El PUT puede tomar el id o el nombre del usuario como parametro de busqueda para actualizarlo.
   export async function PUT(req: NextRequest) {
     try {
       
@@ -124,6 +127,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
     }
   }
+
+// A pesar de la relación entre ambas tablas, borrar un usuario con este DELETE NO borra sus modelos correspondientes. He tomado esta medida porque lso datos de los modelos pueden ser importantes y 
+// necesitarse aun tras eliminar un usuario,y porque siempre pueden ser reasignados a otro usuario en caso de necesidad. Podemos implementar esto en el front, con una segunda llamada, 
+// ya que el DELETE de modelos permite borrar todos los modelos de un mismo usuario, y borra las metricas y logs de estos en cascada. La base de datos admite nulos en el UserId de los modelos, y autoasigna null a los vacíos.
 
   export async function DELETE(req: NextRequest) {
     try {

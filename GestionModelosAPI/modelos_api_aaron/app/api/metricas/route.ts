@@ -10,7 +10,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://mggjezyornw
 const supabaseKey = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1nZ2plenlvcm53dWthcHhldW9hIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNDY4MjQ0NiwiZXhwIjoyMDUwMjU4NDQ2fQ.WSaXph9ZB1jJ2nfpzhvpPnlpMpw0XVipm3Q3SVMMM8I';
 const supabase = createClient(supabaseUrl, supabaseKey)
 
-
+//El GET puede devolver todas las metricas, una métrica específica, o todas las metricas de un modelo en concreto.
 
 export async function GET(req: NextRequest) {
     try {
@@ -42,6 +42,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
     }
 }
+
+//El POST comprueba que exista el modelo correspondiente antes de crear el registro de la metrica. No puedes crear metricas sin un modelo asociado.
 
 export async function POST(req: NextRequest) {
     try {
@@ -98,7 +100,7 @@ export async function POST(req: NextRequest) {
   }
 
 
-
+//Este DELETE permite borrar una métrica especifica por Id, o todas las metricas de un modelo especificado sin borrar el propio modelo
   export async function DELETE(req: NextRequest) {
     try {
       
