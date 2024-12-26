@@ -55,10 +55,7 @@ export async function POST(req: NextRequest) {
       
       const { modeloId, accion, detalle, fechaAccion }: Partial<Log> = body;
   
-        console.info('modeloId:', modeloId);
-        console.info('accion:', accion);
-        console.info('detalle:', detalle);
-        console.info('fechaAccion:', fechaAccion);
+       
       
       if (!modeloId || !accion || !detalle || !fechaAccion) {
         return NextResponse.json(

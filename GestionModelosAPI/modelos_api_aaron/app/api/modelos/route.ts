@@ -51,11 +51,7 @@ export async function POST(req: NextRequest) {
       
       const { nombre, descripcion, version, fecha_despliegue, UsuarioId }: Partial<Modelo> = body;
   
-        console.info('nombre:', nombre); 
-        console.info('descripcion:', descripcion);
-        console.info('version:', version);
-        console.info('fechaDespliegue:', fecha_despliegue);
-        console.info('usuarioId:', UsuarioId);
+        
 
       if (!nombre || !descripcion || !version || !fecha_despliegue || !UsuarioId) {
         return NextResponse.json(

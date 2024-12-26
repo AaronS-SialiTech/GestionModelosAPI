@@ -53,11 +53,7 @@ export async function POST(req: NextRequest) {
       
       const { modeloId, precision, recall, f1_score, fechaEvaluacion }: Partial<Metrica> = body;
   
-        console.info('modeloId:', modeloId);
-        console.info('precision:', precision);
-        console.info('recall:', recall);
-        console.info('f1_score:', f1_score);
-        console.info('fechaEvaluacion:', fechaEvaluacion);
+       
       
       if (!modeloId || !precision || !recall || !f1_score || !fechaEvaluacion) {
         return NextResponse.json(
