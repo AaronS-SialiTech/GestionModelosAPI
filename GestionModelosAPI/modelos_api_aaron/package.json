@@ -9,7 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.9.6",
     "@supabase/supabase-js": "^2.47.10",
+    "clerk": "latest",
     "next": "^15.1.2",
     "nextjs": "^0.0.3",
     "react": "^19.0.0",
@@ -19,6 +21,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "clerk": "^0.8.3",
     "prisma": "^6.1.0",
     "supabase": "^2.1.1",
     "typescript": "^5"

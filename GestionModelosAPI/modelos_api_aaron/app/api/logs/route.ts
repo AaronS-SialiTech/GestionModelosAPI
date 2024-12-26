@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import type { NextApiRequest, NextApiResponse } from 'next'
 
+import { supabase } from '../../lib/supabaseClient'
 
 import { Modelo } from '../../types/modelos'
 import { createClient } from '@supabase/supabase-js';
 import { Log } from '@/app/types/logs';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://mggjezyornwukapxeuoa.supabase.co'
-const supabaseKey = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1nZ2plenlvcm53dWthcHhldW9hIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNDY4MjQ0NiwiZXhwIjoyMDUwMjU4NDQ2fQ.WSaXph9ZB1jJ2nfpzhvpPnlpMpw0XVipm3Q3SVMMM8I';
-const supabase = createClient(supabaseUrl, supabaseKey)
+// const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://mggjezyornwukapxeuoa.supabase.co'
+// const supabaseKey = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1nZ2plenlvcm53dWthcHhldW9hIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNDY4MjQ0NiwiZXhwIjoyMDUwMjU4NDQ2fQ.WSaXph9ZB1jJ2nfpzhvpPnlpMpw0XVipm3Q3SVMMM8I';
+// const supabase = createClient(supabaseUrl, supabaseKey)
 
 
 //El GET puede devolver todos los logs, un log específico, o todos los logs de un modelo en concreto.
@@ -24,9 +24,11 @@ export async function GET(req: NextRequest) {
       if (id) query = query.eq('id', id);
       if (modeloId) query = query.eq('modeloId', modeloId);
       
-
+      
       const { data, error } = await query;
   
+      console.info(data)
+      
       if (error) {
         return NextResponse.json({ error: error.message }, { status: 400 });
       }
