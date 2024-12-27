@@ -18,4 +18,5 @@ if (!supabase) {
 }
 else {
   console.log('Supabase client created')
+
 }
