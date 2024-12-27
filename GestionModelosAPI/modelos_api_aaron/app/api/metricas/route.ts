@@ -26,8 +26,8 @@ export async function GET(req: NextRequest) {
       
 
       const { data, error } = await query;
-  
-      if (error) {
+      
+      if (error && !data) {
         return NextResponse.json({ error: error.message }, { status: 400 });
       }
   
