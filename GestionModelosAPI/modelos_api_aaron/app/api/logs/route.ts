@@ -53,14 +53,14 @@ export async function POST(req: NextRequest) {
       const body = await req.json();
   
       
-      const { modeloId, accion, detalle, fechaAccion }: Partial<Log> = body;
+      const { modeloId, accion, detalle, fecha_accion }: Partial<Log> = body;
   
         console.info('modeloId:', modeloId);
         console.info('accion:', accion);
         console.info('detalle:', detalle);
-        console.info('fechaAccion:', fechaAccion);
+        console.info('fechaAccion:', fecha_accion);
       
-      if (!modeloId || !accion || !detalle || !fechaAccion) {
+      if (!modeloId || !accion || !detalle || !fecha_accion) {
         return NextResponse.json(
           { error: 'Faltan campos requeridos' },
           { status: 400 }
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
       
       const { data, error } = await supabase
         .from('logs')
-        .insert([{ modeloId, accion, detalle, fechaAccion }])
+        .insert([{ modeloId, accion, detalle, fecha_accion }])
         .select('*')
         .single();
   

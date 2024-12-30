@@ -5,5 +5,5 @@ export interface Log {
     modeloId: string;
     accion: string;
     detalle: Text;
-    fechaAccion: Date;
+    fecha_accion: Date;
   }
