@@ -11,11 +11,17 @@
   "dependencies": {
     "@clerk/nextjs": "^6.9.6",
     "@supabase/supabase-js": "^2.47.10",
+    "@vercel/postgres": "^0.10.0",
+    "auth": "^1.2.3",
+    "bcrypt": "^5.1.1",
     "clerk": "latest",
     "next": "^15.1.2",
+    "next-auth": "^4.24.11",
     "nextjs": "^0.0.3",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "vercel": "^39.2.2",
+    "zod": "latest"
   },
   "devDependencies": {
     "@types/node": "^20",

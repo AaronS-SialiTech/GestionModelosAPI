@@ -22,6 +22,8 @@
 
 
 // auth.config.js
+
+
 export const authConfig = {
   providers: [],
 };

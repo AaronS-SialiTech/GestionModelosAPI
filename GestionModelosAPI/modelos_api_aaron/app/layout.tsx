@@ -35,7 +35,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+    publishableKey='pk_test_YWJzb2x1dGUtY29yZ2ktMjguY2xlcmsuYWNjb3VudHMuZGV2JA'>
       <html lang="en">
         <body>
           <header>

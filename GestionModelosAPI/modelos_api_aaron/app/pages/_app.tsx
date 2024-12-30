@@ -10,7 +10,8 @@ import {
 
   export default function MyApp({ Component, pageProps }: AppProps) {
     return (
-        <ClerkProvider>
+        <ClerkProvider
+        publishableKey='pk_test_YWJzb2x1dGUtY29yZ2ktMjguY2xlcmsuYWNjb3VudHMuZGV2JA'>
           <SignedOut>
             <SignInButton />
           </SignedOut>
