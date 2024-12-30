@@ -6,5 +6,5 @@ export interface Metrica {
     precision: number;
     recall: number;
     f1_score: number;
-    fechaEvaluacion: Date;
+    fecha_evaluacion: Date;
   }

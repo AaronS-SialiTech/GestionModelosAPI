@@ -51,15 +51,15 @@ export async function POST(req: NextRequest) {
       const body = await req.json();
   
       
-      const { modeloId, precision, recall, f1_score, fechaEvaluacion }: Partial<Metrica> = body;
+      const { modeloId, precision, recall, f1_score, fecha_evaluacion }: Partial<Metrica> = body;
   
         console.info('modeloId:', modeloId);
         console.info('precision:', precision);
         console.info('recall:', recall);
         console.info('f1_score:', f1_score);
-        console.info('fechaEvaluacion:', fechaEvaluacion);
+        console.info('fechaEvaluacion:', fecha_evaluacion);
       
-      if (!modeloId || !precision || !recall || !f1_score || !fechaEvaluacion) {
+      if (!modeloId || !precision || !recall || !f1_score || !fecha_evaluacion) {
         return NextResponse.json(
           { error: 'Faltan campos requeridos' },
           { status: 400 }
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
       
       const { data, error } = await supabase
         .from('metricas')
-        .insert([{ modeloId, precision, recall, f1_score, fechaEvaluacion }])
+        .insert([{ modeloId, precision, recall, f1_score, fecha_evaluacion }])
         .select('*')
         .single();
   
