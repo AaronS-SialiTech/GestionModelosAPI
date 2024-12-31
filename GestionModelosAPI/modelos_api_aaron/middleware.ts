@@ -1,22 +1,26 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-const isPublicRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up(.*)'])
-
-//export default clerkMiddleware()
+const isPublicRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up(.*)', '/api/webhook(.*)']);
 
 export default clerkMiddleware(async (auth, request) => {
-  if (!isPublicRoute(request)) {
-//Comentar o descomentar para activar o desactivar el middleware
-
-    //await auth.protect()
+  // Excluir rutas públicas (incluyendo el webhook)
+  if (isPublicRoute(request)) {
+    return; // No aplicar autenticación para estas rutas
   }
-})
+
+
+  // try {
+  //   await auth.protect(); 
+  // } catch (error) {
+  //   console.error('Error de autenticación en middleware:', error);
+  // }
+});
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
+    // Rutas a las que se aplica este middleware
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
+    // Siempre correr en rutas API
     '/(api|trpc)(.*)',
   ],
-}
+};

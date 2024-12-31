@@ -1,77 +1,80 @@
-import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto';
-import { supabase } from '../../lib/supabaseClient'; // Ajusta según tu configuración
+import { NextResponse } from 'next/server';
+import { Webhook } from 'svix';
+import { NextRequest } from 'next/server';
+import { cookies } from 'next/headers';
+import { supabase } from '../../lib/supabaseClient';
 
-// Clave secreta del Webhook desde Clerk Dashboard
-const CLERK_WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
+const secret= process.env.SVIX_API_KEY || 'whsec_FTaxDc99xipr6m4Cc6uvFrWJAqPfepxr'
+// Instanciamos la clase Webhook de Svix
+const webhook = new Webhook(secret!);
 
 export async function POST(req: NextRequest) {
   try {
-    
-    const payload = await req.text();
-    const signature = req.headers.get('clerk-signature');
+    // Obtén el cuerpo del webhook
+    const body = await req.text();
+    const signature = req.headers.get('svix-signature');
+    const timestamp = req.headers.get('svix-timestamp');
+    const headers = {
+      "webhook-id": req.headers.get('svix-id')!,
+      "webhook-timestamp": req.headers.get('svix-timestamp')!,
+      "webhook-signature": req.headers.get('svix-signature')!,
+    };
 
-    if (!signature) {
-      return NextResponse.json(
-        { error: 'Falta la firma del webhook.' },
-        { status: 401 }
-      );
+    // Verifica que tengamos la firma y el timestamp
+    if (!signature || !timestamp) {
+      return new NextResponse('Missing signature or timestamp', { status: 400 });
     }
 
-    
-    const hmac = crypto.createHmac('sha256', CLERK_WEBHOOK_SECRET!);
-    hmac.update(payload, 'utf-8');
-    const digest = hmac.digest('hex');
-
-    if (signature !== digest) {
-      return NextResponse.json(
-        { error: 'Firma inválida.' },
-        { status: 401 }
-      );
+    // Verifica la firma del webhook usando el método correcto
+    try {
+      webhook.verify(body, headers); // Verificación de la firma del webhook
+    } catch (error) {
+      return new NextResponse('Invalid signature', { status: 400 });
     }
 
-    
-    const event = JSON.parse(payload);
+    // Procesar el webhook aquí
+    const event = JSON.parse(body);
+    event
 
+    // Ejemplo de cómo manejar el evento
     if (event.type === 'user.created') {
-      const user = event.data;
+      // Realiza una acción cuando se crea un usuario, por ejemplo, actualizar tu base de datos
 
-      
-      const { data, error } = await supabase
-        .from('usuarios')
-        .insert([
-          {
-            id: user.id,
-            email: user.email_addresses[0]?.email_address,
-            nombre: `${user.first_name} ${user.last_name}`,
-            fechaCreacion: new Date().toISOString(),
-          },
-        ])
-        .select();
-
-      if (error) {
-        console.error('Error al registrar usuario:', error);
-        return NextResponse.json(
-          { error: 'Error al registrar usuario.' },
-          { status: 500 }
-        );
+      const datos=event.data;
+      console.info('----------------POST-------------------------')
+      var nombre=(datos.first_name);
+      const email=datos.email_addresses[0].email_address;
+      const fechaCreacion=new Date().toISOString();
+      if (!nombre) {
+        console.error('Error al asignar nombre de usuario. Se asignará un nombre genérico.');
+        nombre = 'Usuario sin nombre';
       }
+      try {
 
-      return NextResponse.json(
-        { message: 'Usuario registrado con éxito.', data },
-        { status: 200 }
-      );
-    }
+      const { data, error } = await supabase
+              .from('usuarios')
+              .insert([{nombre,email,fechaCreacion }])
+              .select('*')
+              .single();
+        
+            
+            if (error) {
+              console.error('Error 400 en el POST de usuarios:', error);
+              return NextResponse.json({ error: error.message }, { status: 400 });
+            }
+        
+            
+            return NextResponse.json({ message: 'Usuario creado con éxito', data }, { status: 201 });
+          } catch (error) {
+            console.error('Error 500 en el POST de usuarios:', error);
+            return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
+          }
 
-    return NextResponse.json(
-      { message: 'Evento no manejado.' },
-      { status: 400 }
-    );
+     }
+
+    return new NextResponse('Webhook processed', { status: 200 });
   } catch (error) {
     console.error('Error procesando el webhook:', error);
-    return NextResponse.json(
-      { error: 'Error interno del servidor.' },
-      { status: 500 }
-    );
+    return new NextResponse('Internal server error', { status: 500 });
   }
 }
