@@ -9,8 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clerk/backend": "^1.21.4",
+    "@clerk/clerk-sdk-node": "^5.1.4",
     "@clerk/nextjs": "latest",
-    "@noble/hashes": "^1.6.1",
+  
     "@supabase/supabase-js": "^2.47.10",
     "@vercel/postgres": "^0.10.0",
     "auth": "^1.2.3",
@@ -26,7 +28,6 @@
     "react-dom": "^19.0.0",
     "svix": "^1.44.0",
     "utf8": "^3.0.0",
-    "utils": "link:@noble/hashes/utils",
     "vercel": "^39.2.2",
     "zod": "latest"
   },

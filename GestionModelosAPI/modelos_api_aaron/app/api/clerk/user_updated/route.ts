@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import { Webhook } from 'svix';
 import { NextRequest } from 'next/server';
-import { cookies } from 'next/headers';
-import { supabase } from '../../lib/supabaseClient';
 
-const secret= process.env.SVIX_API_KEY || 'whsec_FTaxDc99xipr6m4Cc6uvFrWJAqPfepxr'
+import { supabase } from '../../../lib/supabaseClient';
+
+const secret= process.env.SVIX_API_KEY || 'whsec_OTYV71o39JlillLZo/U4bJsdTgKftx86'
 // Instanciamos la clase Webhook de Svix
 const webhook = new Webhook(secret!);
 
@@ -37,40 +37,18 @@ export async function POST(req: NextRequest) {
     event
 
     // Ejemplo de cómo manejar el evento
-    if (event.type === 'user.created') {
+    if (event.type === 'user.updated') {
       // Realiza una acción cuando se crea un usuario, por ejemplo, actualizar tu base de datos
 
       const datos=event.data;
-      console.info('----------------POST-------------------------')
-      var nombre=(datos.first_name);
-      const email=datos.email_addresses[0].email_address;
-      const fechaCreacion=new Date().toISOString();
-      if (!nombre) {
-        console.error('Error al asignar nombre de usuario. Se asignará un nombre genérico.');
-        nombre = 'Usuario sin nombre';
-      }
-      try {
+      console.info('----------------PUT------------------')
+      console.info('datos',datos)
+    
+        //Esto queda así, vacío, a vista de que expandamos la tabla usuarios y veamos qué campos nos interesan, porque ahora mismo actualizar no hay nada que actualizar en usuarios.SS
 
-      const { data, error } = await supabase
-              .from('usuarios')
-              .insert([{nombre,email,fechaCreacion }])
-              .select('*')
-              .single();
-        
-            
-            if (error) {
-              console.error('Error 400 en el POST de usuarios:', error);
-              return NextResponse.json({ error: error.message }, { status: 400 });
-            }
-        
-            
-            return NextResponse.json({ message: 'Usuario creado con éxito', data }, { status: 201 });
-          } catch (error) {
-            console.error('Error 500 en el POST de usuarios:', error);
-            return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
-          }
 
-     }
+
+    }
 
     return new NextResponse('Webhook processed', { status: 200 });
   } catch (error) {

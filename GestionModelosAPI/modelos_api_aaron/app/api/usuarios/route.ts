@@ -10,18 +10,20 @@ import { createClient } from '@supabase/supabase-js';
 // const supabase = createClient(supabaseUrl, supabaseKey)
 
 
-//El GET permite obtener un listado de todos los usuarios, o los datos de un usuario especificado por Id o nombre
+//El GET permite obtener un listado de todos los usuarios, o los datos de un usuario especificado por Id o email
 export async function GET(req: NextRequest) {
     try {
       const { searchParams } = new URL(req.url);
       const id = searchParams.get('id');
-      const name = searchParams.get('name');
+      const email = searchParams.get('email');
+      const clerkId = searchParams.get('clerkId');
   
       
       let query = supabase.from<any,Usuario>('usuarios').select('*');
   
       if (id) query = query.eq('id', id);
-      if (name) query = query.eq('nombre', name);
+      if (email) query = query.eq('email', email);
+      if (clerkId) query = query.eq('clerkId', clerkId);
   
       const { data, error } = await query;
   
@@ -49,9 +51,9 @@ export async function POST(req: NextRequest) {
       const body = await req.json();
   
       
-      const { nombre, email, fechaCreacion }: Partial<Usuario> = body;
+      const { nombre, email, fechaCreacion, clerkId }: Partial<Usuario> = body;
   
-      if (!nombre || !email || !fechaCreacion) {
+      if (!nombre || !email || !fechaCreacion || !clerkId) {
         return NextResponse.json(
           { error: 'Faltan campos requeridos' },
           { status: 400 }
@@ -61,7 +63,7 @@ export async function POST(req: NextRequest) {
       
       const { data, error } = await supabase
         .from('usuarios')
-        .insert([{ nombre, email, fechaCreacion }])
+        .insert([{ nombre, email, fechaCreacion, clerkId }])
         .select('*')
         .single();
   
@@ -83,12 +85,12 @@ export async function POST(req: NextRequest) {
     try {
       
       const body = await req.json();
-      const { id, name, ...updateFields } = body;
+      const { id, email, clerkId, ...updateFields } = body;
   
       
-      if (!id && !name) {
+      if (!id && !email && !clerkId) {
         return NextResponse.json(
-          { error: 'Se requiere id o name para actualizar un usuario.' },
+          { error: 'Se requiere id, email, o id de clerk para actualizar un usuario.' },
           { status: 400 }
         );
       }
@@ -104,7 +106,7 @@ export async function POST(req: NextRequest) {
       
       let query = supabase.from('usuarios').update(updateFields);
       if (id) query = query.eq('id', id);
-      if (name) query = query.eq('nombre', name);
+      if (email) query = query.eq('email', email);
   
       const { data, error } = await query;
   
@@ -137,12 +139,12 @@ export async function POST(req: NextRequest) {
       
       const { searchParams } = new URL(req.url);
       const id = searchParams.get('id');
-      const name = searchParams.get('name');
-  
+      const email = searchParams.get('email');
+      const clerkId = searchParams.get('clerkId');
       
-      if (!id && !name) {
+      if (!id && !email&& !clerkId) {
         return NextResponse.json(
-          { error: 'Se requiere id o name para eliminar un usuario.' },
+          { error: 'Se requiere id o email para eliminar un usuario.' },
           { status: 400 }
         );
       }
@@ -150,7 +152,8 @@ export async function POST(req: NextRequest) {
       
       let query = supabase.from('usuarios').delete();
       if (id) query = query.eq('id', id);
-      if (name) query = query.eq('nombre', name);
+      if (email) query = query.eq('email', email);
+      if (clerkId) query = query.eq('clerkId', clerkId);
   
       const { data, error } = await query;
   
