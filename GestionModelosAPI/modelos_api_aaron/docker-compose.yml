@@ -11,14 +11,14 @@ services:
       CLERK_API_KEY: pk_test_YWJzb2x1dGUtY29yZ2ktMjguY2xlcmsuYWNjb3VudHMuZGV2JA'
       CLERK_SECRET_KEY: 'sk_test_cV8tQDJU1mtkYiRojQaUcPITVctKwOjfCp1oZoxgdG'
       CLERK_WEBHOOK_SECRET: 'whsec_FTaxDc99xipr6m4Cc6uvFrWJAqPfepxr'
-    depends_on:
-      - supabase
+  #   depends_on:
+  #     - supabase
 
-  supabase:
-    image: supabase/postgres:latest
-    ports:
-      - "54321:54321"
-    environment:
-      POSTGRES_PASSWORD: pgpass
-      POSTGRES_USER: postgres
-      POSTGRES_DB: postgres
+  # supabase:
+  #   image: supabase/postgres:latest
+  #   ports:
+  #     - "54321:54321"
+  #   environment:
+  #     POSTGRES_PASSWORD: pgpass
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_DB: postgres

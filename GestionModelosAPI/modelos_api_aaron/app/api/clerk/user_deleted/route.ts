@@ -13,12 +13,12 @@ const CLERK_API_URL='https://api.clerk.com'
 const clerkClient = createClerkClient({ secretKey: CLERK_SECRET_KEY })
 
 const secret= process.env.SVIX_API_KEY || 'whsec_ok9URzPqiM+GibzsUIUaY8EWhTCdhCqH'
-// Instanciamos la clase Webhook de Svix
+
 const webhook = new Webhook(secret!);
 
 export async function POST(req: NextRequest) {
   try {
-    // Obtén el cuerpo del webhook
+    
     const body = await req.text();
     const signature = req.headers.get('svix-signature');
     const timestamp = req.headers.get('svix-timestamp');
@@ -28,25 +28,25 @@ export async function POST(req: NextRequest) {
       "webhook-signature": req.headers.get('svix-signature')!,
     };
 
-    // Verifica que tengamos la firma y el timestamp
+    
     if (!signature || !timestamp) {
       return new NextResponse('Missing signature or timestamp', { status: 400 });
     }
 
-    // Verifica la firma del webhook usando el método correcto
+    
     try {
-      webhook.verify(body, headers); // Verificación de la firma del webhook
+      webhook.verify(body, headers); 
     } catch (error) {
       return new NextResponse('Invalid signature', { status: 400 });
     }
     console.info('Conexion a webhook correcta')
-    // Procesar el webhook aquí
+    
     const event = JSON.parse(body);
     event
 
-    // Ejemplo de cómo manejar el evento
+    
     if (event.type === 'user.deleted') {
-      // Realiza una acción cuando se crea un usuario, por ejemplo, actualizar tu base de datos
+      
       console.log('POST Recibido');
       
     
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     
     const userId=datos.id
     try {
-        // Obtener el usuario a través del ID
+        
         
         console.info('userId:', userId);
         let query = supabase.from('usuarios').delete();
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
       }
   
       return NextResponse.json({ message: 'Usuario eliminado con éxito', data }, { status: 200 });
-        // Responder con los detalles del usuario
+        
        
       } catch (error) {
         console.error('Error al obtener usuario:', error);

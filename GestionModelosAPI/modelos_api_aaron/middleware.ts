@@ -1,6 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-const isPublicRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up(.*)', '/api/webhook(.*)']);
+const isPublicRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up(.*)', '/api/(.*)']);
 
 export default clerkMiddleware(async (auth, request) => {
   // Excluir rutas públicas (incluyendo el webhook)
@@ -9,12 +9,13 @@ export default clerkMiddleware(async (auth, request) => {
   }
 
 
-  // try {
-  //   await auth.protect(); 
-  // } catch (error) {
-  //   console.error('Error de autenticación en middleware:', error);
-  // }
+  try {
+    await auth.protect(); 
+  } catch (error) {
+    console.error('Error de autenticación en middleware:', error);
+  }
 });
+
 
 export const config = {
   matcher: [
