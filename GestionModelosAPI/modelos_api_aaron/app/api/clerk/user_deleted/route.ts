@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
         let query = supabase.from('usuarios').delete();
         if (userId) query = query.eq('clerkId', userId);
         const { data, error } = await query;
-  
+        console.info(data);
       
       if (error) {
         return NextResponse.json({ error: error.message }, { status: 400 });

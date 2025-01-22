@@ -3,7 +3,8 @@ export interface Usuario {
     nombre: string;
     email: string;
     fechaCreacion: Date;
-    clerkId: string;
+    clerkId: string,
+    role:string;
   }
 
   
