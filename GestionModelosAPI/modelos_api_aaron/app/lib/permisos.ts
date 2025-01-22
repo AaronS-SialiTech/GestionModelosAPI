@@ -28,10 +28,23 @@ export async function getUserAndPermissions(request: Request): Promise<Usuario> 
   if (error ) {
     throw new Error("Permisos no encontrados");
   }
-  const user= data as Usuario;
 
+  if (!data || data.length === 0) {
+    throw new Error("Usuario no loggeado");
+  }
+
+  const user= data as Usuario;
+  console.info('user:', user);
 console.info('role:', user.role);
   return user;
     
   
+}
+
+
+export async function hasPermission(permission: string[], req: Request): Promise<boolean> {
+  const user = await getUserAndPermissions(req);
+  //return user.role === permission;
+  console.info('user.role:', user.role);
+  return permission.includes(user.role);
 }

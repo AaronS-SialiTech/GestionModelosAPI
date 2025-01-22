@@ -21,9 +21,10 @@ export async function GET(req: NextRequest) {
     }
  console.info('Usuario obtenido',user);
  var us=user as Usuario
- console.info('Rol', us.id);
+ console.info('Rol', us);
  const authData = getAuth(req);
-    return NextResponse.json({ message: authData }, { status: 200 });
+
+  return NextResponse.json({ message: user }, { status: 200 });
 
 
 

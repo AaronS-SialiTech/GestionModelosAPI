@@ -10,7 +10,7 @@ export default clerkMiddleware(async (auth, request) => {
 
 
   try {
-    await auth.protect(); 
+  //  await auth.protect(); 
   } catch (error) {
     console.error('Error de autenticación en middleware:', error);
   }

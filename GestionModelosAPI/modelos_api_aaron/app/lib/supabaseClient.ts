@@ -29,7 +29,3 @@ else {
 
 }
 
-export const getSessionUser = async () => {
-  const { data: { user } } = await supabase.auth.getUser()
-  return user?.id
-}
