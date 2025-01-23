@@ -14,7 +14,7 @@ import { Log } from '@/app/types/logs';
 //El GET puede devolver todos los logs, un log específico, o todos los logs de un modelo en concreto.
 export async function GET(req: NextRequest) {
 
-  if (await hasPermission(['admin'], req) === false) {
+  if (await hasPermission(['*'], req) === false) {
     return NextResponse.json({ error: 'No tienes permiso para acceder a esta ruta' }, { status: 403 });
   }
 
@@ -54,7 +54,10 @@ export async function GET(req: NextRequest) {
 //El POST comprueba que exista el modelo correspondiente antes de crear el registro del log. No puedes crear logs sin un modelo asociado.
 
 export async function POST(req: NextRequest) {
-    try {
+  if (await hasPermission(['admin', 'cliente'], req) === false) {
+    return NextResponse.json({ error: 'No tienes permiso para acceder a esta ruta' }, { status: 403 });
+  }  
+  try {
       
       const body = await req.json();
   
@@ -109,6 +112,9 @@ export async function POST(req: NextRequest) {
 
 //Este DELETE permite borrar un log especifico por Id, o todos los logs de un modelo especificado soin borrar el propio modelo
   export async function DELETE(req: NextRequest) {
+    if (await hasPermission(['admin', 'cliente'], req) === false) {
+      return NextResponse.json({ error: 'No tienes permiso para acceder a esta ruta' }, { status: 403 });
+    }
     try {
       
       const { searchParams } = new URL(req.url);

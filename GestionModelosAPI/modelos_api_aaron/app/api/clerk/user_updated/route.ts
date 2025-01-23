@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
    
       const id=userId;
      
-      const roles= await clerkClient.organizations.getOrganizationMembershipList({organizationId:orgId });
+      const roles= await clerkClient.organizations.getOrganizationMembershipList({organizationId:orgId as string });
   
       for(let i=0;i<roles.data.length;i++){
 

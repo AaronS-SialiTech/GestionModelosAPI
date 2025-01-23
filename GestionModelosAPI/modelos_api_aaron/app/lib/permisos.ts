@@ -1,6 +1,7 @@
 import { getAuth } from "@clerk/nextjs/server";
 import { supabase } from "./supabaseClient";
 import { Usuario } from "../types/usuarios";
+import { RequestLike } from "@clerk/nextjs/dist/types/server/types";
 
 export interface UserPermissions {
   Id: string;
@@ -9,7 +10,7 @@ export interface UserPermissions {
 
 export async function getUserAndPermissions(request: Request): Promise<Usuario> {
   // Obtener el userId del usuario autenticado
-  const authData = getAuth(request);
+  const authData = getAuth(request as RequestLike);
   //console.info("Auth Data:", authData);
 
   const { userId } = authData;
@@ -46,5 +47,5 @@ export async function getUserAndPermissions(request: Request): Promise<Usuario> 
 export async function hasPermission(permission: string[], req: Request): Promise<boolean> {
   const user = await getUserAndPermissions(req);
 
-  return permission.includes(user.role);
+  return permission.includes(user.role) || permission.includes('*');
 }
