@@ -21,26 +21,18 @@ export async function POST(req: NextRequest) {
       "webhook-signature": req.headers.get('svix-signature')!,
     };
 
-  
     if (!signature || !timestamp) {
       return new NextResponse('Missing signature or timestamp', { status: 400 });
     }
-
-    
     try {
       webhook.verify(body, headers); 
     } catch (error) {
       return new NextResponse('Invalid signature', { status: 400 });
     }
 
-
     const event = JSON.parse(body);
-    event
-
-    
     if (event.type === 'user.created') {
       
-
       const datos=event.data;
       console.info('----------------POST-------------------------')
       var nombre=(datos.first_name);
@@ -69,14 +61,18 @@ export async function POST(req: NextRequest) {
             if(search!=null){
                       console.info('PERMISOS ACTUALES: ', search.role);
                       const role=search.role.split(':')[1];
-                      console.info('PERMISOS ACTUALES: ', role);
+                      console.info('PERMISOS: ', role);
                       const user = await clerkClient.users.getUser(clerkId as string);
-                      let query=supabase.from('usuarios').update({ role: role}).eq('clerkId', user.id);
+                      if (!user) 
+                        return NextResponse.json({ error: 'El usuario no existe en clerk' }, { status: 400 });
+                      let query=supabase.from('usuarios').update({ role: role}).eq('clerkId', clerkId);
                       const { data, error } = await query;
-                      if (error) {
+                      if (error) 
                         return NextResponse.json({ error: error.message }, { status: 400 });
-                      }
-                    }
+                      if(data==null)
+                        return NextResponse.json({ error: "Error al asignar rol" }, { status: 400 });
+
+                  }
             return NextResponse.json({ message: 'Usuario creado con éxito', data }, { status: 201 });
           } catch (error) {
             console.error('Error 500 en el POST de usuarios:', error);

@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
         }
         const nombre = datos.firstName;
         const user = await clerkClient.users.getUser(userId as string);
-        let query = supabase.from('usuarios').update({ nombre: nombre, email: user.emailAddresses[0].emailAddress }).eq('clerkId', user.id);
+        let query = supabase.from('usuarios').update({ nombre: nombre, email: user.emailAddresses[0].emailAddress }).eq('clerkId', userId);
         const { data:userData, error:userError } = await query;
 
         if (userData === null) {
