@@ -168,8 +168,6 @@ export async function POST(req: NextRequest) {
       if (clerkId) query = query.eq('clerkId', clerkId);
   
       const { data, error } = await query;
-  
-      
       if (error) {
         return NextResponse.json({ error: error.message }, { status: 400 });
       }

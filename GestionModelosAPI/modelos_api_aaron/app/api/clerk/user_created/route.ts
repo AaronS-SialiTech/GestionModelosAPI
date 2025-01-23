@@ -67,7 +67,9 @@ export async function POST(req: NextRequest) {
             const org = await clerkClient.organizations.getOrganizationMembershipList({organizationId: orgId as string });
             const search=org.data.find(userData=> userData.publicUserData?.userId==clerkId)
             if(search!=null){
+                      console.info('PERMISOS ACTUALES: ', search.role);
                       const role=search.role.split(':')[1];
+                      console.info('PERMISOS ACTUALES: ', role);
                       const user = await clerkClient.users.getUser(clerkId as string);
                       let query=supabase.from('usuarios').update({ role: role}).eq('clerkId', user.id);
                       const { data, error } = await query;

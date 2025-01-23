@@ -1,14 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-
 import { supabase } from '../../lib/supabaseClient'
 import { getUserAndPermissions, hasPermission } from '@/app/lib/permisos';
 import { Modelo } from '../../types/modelos'
 import { createClient } from '@supabase/supabase-js';
 import { Log } from '@/app/types/logs';
-
-// const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://mggjezyornwukapxeuoa.supabase.co'
-// const supabaseKey = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1nZ2plenlvcm53dWthcHhldW9hIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNDY4MjQ0NiwiZXhwIjoyMDUwMjU4NDQ2fQ.WSaXph9ZB1jJ2nfpzhvpPnlpMpw0XVipm3Q3SVMMM8I';
-// const supabase = createClient(supabaseUrl, supabaseKey)
 
 
 //El GET puede devolver todos los logs, un log específico, o todos los logs de un modelo en concreto.
@@ -18,22 +13,16 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'No tienes permiso para acceder a esta ruta' }, { status: 403 });
   }
 
-  console.log(hasPermission(['admin', 'client'], req));
+  
     try {
       const { searchParams } = new URL(req.url);
       const id = searchParams.get('id');
       const modeloId=searchParams.get('modeloId');
       
-
       let query = supabase.from('logs').select('*');
-  
       if (id) query = query.eq('id', id);
       if (modeloId) query = query.eq('modeloId', modeloId);
-      
-      
       const { data, error } = await query;
-  
-      console.info(data)
       
       if (error) {
         return NextResponse.json({ error: error.message }, { status: 400 });
@@ -51,17 +40,15 @@ export async function GET(req: NextRequest) {
     }
 }
 
-//El POST comprueba que exista el modelo correspondiente antes de crear el registro del log. No puedes crear logs sin un modelo asociado.
 
+//El POST comprueba que exista el modelo correspondiente antes de crear el registro del log. No puedes crear logs sin un modelo asociado.
 export async function POST(req: NextRequest) {
-  if (await hasPermission(['admin', 'cliente'], req) === false) {
+  if (await hasPermission(['*'], req) === false) {
     return NextResponse.json({ error: 'No tienes permiso para acceder a esta ruta' }, { status: 403 });
   }  
   try {
       
-      const body = await req.json();
-  
-      
+      const body = await req.json(); 
       const { modeloId, accion, detalle, fecha_accion }: Partial<Log> = body;
   
         console.info('modeloId:', modeloId);
@@ -87,16 +74,14 @@ export async function POST(req: NextRequest) {
       if (!modelos || modelos.length === 0) {
         return NextResponse.json({ error: 'Modelo no encontrado. No puedes crear logs sin un modelo asignado' }, { status: 404 });
       }
-  
-  
-      
+
+
       const { data, error } = await supabase
         .from('logs')
         .insert([{ modeloId, accion, detalle, fecha_accion }])
         .select('*')
         .single();
   
-      
       if (error) {
         return NextResponse.json({ error: error.message }, { status: 400 });
       }
@@ -112,7 +97,7 @@ export async function POST(req: NextRequest) {
 
 //Este DELETE permite borrar un log especifico por Id, o todos los logs de un modelo especificado soin borrar el propio modelo
   export async function DELETE(req: NextRequest) {
-    if (await hasPermission(['admin', 'cliente'], req) === false) {
+    if (await hasPermission(['*'], req) === false) {
       return NextResponse.json({ error: 'No tienes permiso para acceder a esta ruta' }, { status: 403 });
     }
     try {
