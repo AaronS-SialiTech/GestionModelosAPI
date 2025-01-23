@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { Webhook } from 'svix';
 import { NextRequest } from 'next/server';
-
+import { createClerkClient } from '@clerk/backend'
 import { supabase } from '../../../lib/supabaseClient';
 
+const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY })
 const secret= process.env.SVIX_API_KEY || 'whsec_FTaxDc99xipr6m4Cc6uvFrWJAqPfepxr'
 
 const webhook = new Webhook(secret!);
@@ -58,13 +59,23 @@ export async function POST(req: NextRequest) {
               .select('*')
               .single();
         
-            
             if (error) {
               console.error('Error 400 en el POST de usuarios:', error);
               return NextResponse.json({ error: error.message }, { status: 400 });
             }
         
-            
+            const orgId=process.env.CLERK_ID_ORGANIZACION as string;
+            const org = await clerkClient.organizations.getOrganizationMembershipList({organizationId: orgId as string });
+            const search=org.data.find(userData=> userData.publicUserData?.userId==clerkId)
+            if(search!=null){
+                      const role=search.role
+                      const user = await clerkClient.users.getUser(clerkId as string);
+                      let query=supabase.from('usuarios').update({ role: role.split(':')[1]}).eq('clerkId', user.id);
+                      const { data, error } = await query;
+                      if (error) {
+                        return NextResponse.json({ error: error.message }, { status: 400 });
+                      }
+                    }
             return NextResponse.json({ message: 'Usuario creado con éxito', data }, { status: 201 });
           } catch (error) {
             console.error('Error 500 en el POST de usuarios:', error);
