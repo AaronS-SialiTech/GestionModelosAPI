@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { supabase } from '../../lib/supabaseClient'
-
+import { getUserAndPermissions, hasPermission } from '@/app/lib/permisos';
 import { Modelo } from '../../types/modelos'
 import { createClient } from '@supabase/supabase-js';
 import { Log } from '@/app/types/logs';
@@ -13,6 +13,12 @@ import { Log } from '@/app/types/logs';
 
 //El GET puede devolver todos los logs, un log específico, o todos los logs de un modelo en concreto.
 export async function GET(req: NextRequest) {
+
+  if (await hasPermission(['admin'], req) === false) {
+    return NextResponse.json({ error: 'No tienes permiso para acceder a esta ruta' }, { status: 403 });
+  }
+
+  console.log(hasPermission(['admin', 'client'], req));
     try {
       const { searchParams } = new URL(req.url);
       const id = searchParams.get('id');

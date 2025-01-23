@@ -33,9 +33,10 @@ export async function getUserAndPermissions(request: Request): Promise<Usuario> 
     throw new Error("Usuario no loggeado");
   }
 
-  const user= data as Usuario;
-  console.info('user:', user);
-console.info('role:', user.role);
+  const user : Usuario = data[0] as Usuario; 
+
+
+
   return user;
     
   
@@ -44,7 +45,6 @@ console.info('role:', user.role);
 
 export async function hasPermission(permission: string[], req: Request): Promise<boolean> {
   const user = await getUserAndPermissions(req);
-  //return user.role === permission;
-  console.info('user.role:', user.role);
+
   return permission.includes(user.role);
 }
