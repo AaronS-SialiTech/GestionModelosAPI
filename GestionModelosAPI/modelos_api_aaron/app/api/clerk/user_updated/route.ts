@@ -5,6 +5,7 @@ import { Usuario } from '@/app/types/usuarios';
 import { useAuth } from "@clerk/nextjs";
 import { supabase } from '../../../lib/supabaseClient';
 import { createClerkClient } from '@clerk/backend'
+import { assignRole, getSupabaseUser } from './utils';
 
 const CLERK_SECRET_KEY='sk_test_cV8tQDJU1mtkYiRojQaUcPITVctKwOjfCp1oZoxgdG'
 const clerkClient = createClerkClient({ secretKey: CLERK_SECRET_KEY })
@@ -13,34 +14,6 @@ const secret= process.env.SVIX_API_KEY || 'whsec_OTYV71o39JlillLZo/U4bJsdTgKftx8
 
 const webhook = new Webhook(secret!);
 
-
-export async function getSupabaseUser(clerkId:string) {
-  const verifyQuery = await supabase.from('usuarios').select('nombre').eq('clerkId', clerkId);
-  var { data, error } = await verifyQuery;
-  if (data === null || data.length === 0) {
-    console.error(error);
-    throw new Error('User not found');
-  }
-  return data[0] as Usuario;
-}
-
-
-export async function assignRole(clerkId:string) {
-  const orgId = process.env.CLERK_ID_ORGANIZACION as string;
-  const org = await clerkClient.organizations.getOrganizationMembershipList({ organizationId: orgId as string });
-  const search = org.data.find(userData => userData.publicUserData?.userId == clerkId)
-  if (search != null) {
-    console.info('PERMISOS ACTUALES: ', search.role);
-    const role = search.role
-    console.info('PERMISOS ACTUALES: ', role);
-    let query = supabase.from('usuarios').update({ role: role.split(':')[1] }).eq('clerkId', clerkId);
-    const { data, error } = await query;
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
-    return NextResponse.json({ message: 'Usuario actualizado con éxito', data }, { status: 200 });
-      }
-    }
 
 
 export async function POST(req: NextRequest) {
@@ -80,7 +53,9 @@ export async function POST(req: NextRequest) {
         return new NextResponse('User not found', { status: 404 });
       } 
         const supabaseUser = await getSupabaseUser(userId);
-        await assignRole(userId);
+        if (await assignRole(userId) === false) {
+          return new NextResponse('User not found', { status: 404 });
+        }
         const nombre = datos.firstName;
         const user = await clerkClient.users.getUser(userId as string);
         let query = supabase.from('usuarios').update({ nombre: nombre, email: user.emailAddresses[0].emailAddress }).eq('clerkId', user.id);

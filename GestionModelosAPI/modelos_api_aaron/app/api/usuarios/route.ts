@@ -5,11 +5,6 @@ import { hasPermission } from '@/app/lib/permisos';
 import { Usuario } from '../../types/usuarios'
 import { createClient } from '@supabase/supabase-js';
 
-// const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://mggjezyornwukapxeuoa.supabase.co'
-// const supabaseKey = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1nZ2plenlvcm53dWthcHhldW9hIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNDY4MjQ0NiwiZXhwIjoyMDUwMjU4NDQ2fQ.WSaXph9ZB1jJ2nfpzhvpPnlpMpw0XVipm3Q3SVMMM8I';
-// const supabase = createClient(supabaseUrl, supabaseKey)
-
-
 //El GET permite obtener un listado de todos los usuarios, o los datos de un usuario especificado por Id o email
 export async function GET(req: NextRequest) {
   if (await hasPermission(['*'], req) === false) {
@@ -45,7 +40,6 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
     }
 }
-
 
 
 export async function POST(req: NextRequest) {
@@ -111,7 +105,6 @@ export async function POST(req: NextRequest) {
           { status: 400 }
         );
       }
-  
       
       let query = supabase.from('usuarios').update(updateFields);
       if (id) query = query.eq('id', id);
@@ -123,15 +116,7 @@ export async function POST(req: NextRequest) {
       if (error) {
         return NextResponse.json({ error: error.message }, { status: 400 });
       }
-    //Esta comprobación da SIEMPRE error aunque haga el PUT perfectamente. El registro se edita perfectamente, pero la llamada siempre va a devolver este error. No es un problema real, pero está ahí. Tal vez quede comentado. -Aarón
 
-    //   if (!data) {
-    //     return NextResponse.json(
-    //       { error: 'No se encontró el usuario a actualizar.' },
-    //       { status: 404 }
-    //     );
-    //   }
-  
       return NextResponse.json({ message: 'Usuario actualizado con éxito', data }, { status: 200 });
     } catch (error) {
       console.error('Error en el PUT de usuarios:', error);
@@ -161,7 +146,7 @@ export async function POST(req: NextRequest) {
         );
       }
   
-      
+  
       let query = supabase.from('usuarios').delete();
       if (id) query = query.eq('id', id);
       if (email) query = query.eq('email', email);

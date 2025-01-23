@@ -3,10 +3,6 @@ import { supabase } from "./supabaseClient";
 import { Usuario } from "../types/usuarios";
 import { RequestLike } from "@clerk/nextjs/dist/types/server/types";
 
-export interface UserPermissions {
-  Id: string;
-  
-}
 
 export async function getUserAndPermissions(request: Request): Promise<Usuario> {
   
