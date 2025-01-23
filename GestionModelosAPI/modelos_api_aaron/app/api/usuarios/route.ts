@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { supabase } from '../../lib/supabaseClient'
-
+import { hasPermission } from '@/app/lib/permisos';
 import { Usuario } from '../../types/usuarios'
 import { createClient } from '@supabase/supabase-js';
 
@@ -12,7 +12,10 @@ import { createClient } from '@supabase/supabase-js';
 
 //El GET permite obtener un listado de todos los usuarios, o los datos de un usuario especificado por Id o email
 export async function GET(req: NextRequest) {
-    try {
+  if (await hasPermission(['*'], req) === false) {
+      return NextResponse.json({ error: 'No tienes permiso para acceder a esta ruta' }, { status: 403 });
+    }  
+  try {
       const { searchParams } = new URL(req.url);
       const id = searchParams.get('id');
       const email = searchParams.get('email');
@@ -46,7 +49,10 @@ export async function GET(req: NextRequest) {
 
 
 export async function POST(req: NextRequest) {
-    try {
+  if (await hasPermission(['*'], req) === false) {
+      return NextResponse.json({ error: 'No tienes permiso para acceder a esta ruta' }, { status: 403 });
+    }  
+  try {
       
       const body = await req.json();
   
@@ -82,6 +88,9 @@ export async function POST(req: NextRequest) {
 
   //El PUT puede tomar el id o el nombre del usuario como parametro de busqueda para actualizarlo.
   export async function PUT(req: NextRequest) {
+    if (await hasPermission(['*'], req) === false) {
+        return NextResponse.json({ error: 'No tienes permiso para acceder a esta ruta' }, { status: 403 });
+      }
     try {
       
       const body = await req.json();
@@ -135,6 +144,9 @@ export async function POST(req: NextRequest) {
 // ya que el DELETE de modelos permite borrar todos los modelos de un mismo usuario, y borra las metricas y logs de estos en cascada. La base de datos admite nulos en el UserId de los modelos, y autoasigna null a los vacíos.
 
   export async function DELETE(req: NextRequest) {
+    if (await hasPermission(['*'], req) === false) {
+      return NextResponse.json({ error: 'No tienes permiso para acceder a esta ruta' }, { status: 403 });
+    }
     try {
       
       const { searchParams } = new URL(req.url);

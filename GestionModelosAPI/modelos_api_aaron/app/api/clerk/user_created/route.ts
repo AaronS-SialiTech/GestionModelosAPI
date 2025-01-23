@@ -63,14 +63,13 @@ export async function POST(req: NextRequest) {
               console.error('Error 400 en el POST de usuarios:', error);
               return NextResponse.json({ error: error.message }, { status: 400 });
             }
-        
             const orgId=process.env.CLERK_ID_ORGANIZACION as string;
             const org = await clerkClient.organizations.getOrganizationMembershipList({organizationId: orgId as string });
             const search=org.data.find(userData=> userData.publicUserData?.userId==clerkId)
             if(search!=null){
-                      const role=search.role
+                      const role=search.role.split(':')[1];
                       const user = await clerkClient.users.getUser(clerkId as string);
-                      let query=supabase.from('usuarios').update({ role: role.split(':')[1]}).eq('clerkId', user.id);
+                      let query=supabase.from('usuarios').update({ role: role}).eq('clerkId', user.id);
                       const { data, error } = await query;
                       if (error) {
                         return NextResponse.json({ error: error.message }, { status: 400 });

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '../../lib/supabaseClient'
-
+import { hasPermission } from '@/app/lib/permisos';
 import { Modelo } from '../../types/modelos'
 import { createClient } from '@supabase/supabase-js';
 
@@ -12,7 +12,10 @@ import { createClient } from '@supabase/supabase-js';
 //El GET permite obtener un listado de todos los modelos, o los datos de un modelo especificado por Id o nombre
 
 export async function GET(req: NextRequest) {
-    try {
+  if (await hasPermission(['*'], req) === false) {
+      return NextResponse.json({ error: 'No tienes permiso para acceder a esta ruta' }, { status: 403 });
+    }  
+  try {
       const { searchParams } = new URL(req.url);
       const id = searchParams.get('id');
       const name = searchParams.get('name');
@@ -44,7 +47,10 @@ export async function GET(req: NextRequest) {
 
 //A pesar de que el POST requiera un UserId, este es nullable en la base de datos para evitar conflictos al eliminar usuarios.
 export async function POST(req: NextRequest) {
-    try {
+  if (await hasPermission(['*'], req) === false) {
+    return NextResponse.json({ error: 'No tienes permiso para acceder a esta ruta' }, { status: 403 });
+  }  
+  try {
       
       const body = await req.json();
   
@@ -87,6 +93,9 @@ export async function POST(req: NextRequest) {
   //El PUT puede tomar el id o el nombre del modelo como parametro de busqueda para actualizarlo.
 
   export async function PUT(req: NextRequest) {
+    if (await hasPermission(['*'], req) === false) {
+      return NextResponse.json({ error: 'No tienes permiso para acceder a esta ruta' }, { status: 403 });
+    }
     try {
       
       const body = await req.json();
@@ -139,6 +148,9 @@ export async function POST(req: NextRequest) {
   //si por cualquier error la API no es capaz de eliminar los logs o modelos, la propia base de datos lo hará. Eso hace el borrado en cascada algo redundante, pero asegura que no haya datos inutiles o conflictivos en la bd.
 
   export async function DELETE(req: NextRequest) {
+    if (await hasPermission(['*'], req) === false) {
+      return NextResponse.json({ error: 'No tienes permiso para acceder a esta ruta' }, { status: 403 });
+    }
     try {
       
       const { searchParams } = new URL(req.url);

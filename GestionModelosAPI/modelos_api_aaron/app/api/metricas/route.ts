@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { supabase } from '../../lib/supabaseClient'
-
+import { hasPermission } from '@/app/lib/permisos';
 import { Modelo } from '../../types/modelos'
 import { createClient } from '@supabase/supabase-js';
 import { Metrica } from '@/app/types/metricas';
@@ -13,7 +13,10 @@ import { Metrica } from '@/app/types/metricas';
 //El GET puede devolver todas las metricas, una métrica específica, o todas las metricas de un modelo en concreto.
 
 export async function GET(req: NextRequest) {
-    try {
+  if (await hasPermission(['*'], req) === false) {
+      return NextResponse.json({ error: 'No tienes permiso para acceder a esta ruta' }, { status: 403 });
+    }  
+  try {
       const { searchParams } = new URL(req.url);
       const id = searchParams.get('id');
       const modeloId=searchParams.get('modeloId');
@@ -46,7 +49,10 @@ export async function GET(req: NextRequest) {
 //El POST comprueba que exista el modelo correspondiente antes de crear el registro de la metrica. No puedes crear metricas sin un modelo asociado.
 
 export async function POST(req: NextRequest) {
-    try {
+  if (await hasPermission(['*'], req) === false) {
+    return NextResponse.json({ error: 'No tienes permiso para acceder a esta ruta' }, { status: 403 });
+  }  
+  try {
       
       const body = await req.json();
   
@@ -102,6 +108,9 @@ export async function POST(req: NextRequest) {
 
 //Este DELETE permite borrar una métrica especifica por Id, o todas las metricas de un modelo especificado sin borrar el propio modelo
   export async function DELETE(req: NextRequest) {
+    if (await hasPermission(['*'], req) === false) {
+      return NextResponse.json({ error: 'No tienes permiso para acceder a esta ruta' }, { status: 403 });
+    }
     try {
       
       const { searchParams } = new URL(req.url);
