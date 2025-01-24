@@ -5,7 +5,7 @@ import { Usuario } from '@/app/types/usuarios';
 import { useAuth } from "@clerk/nextjs";
 import { supabase } from '../../../lib/supabaseClient';
 import { createClerkClient } from '@clerk/backend'
-import { assignRole, getSupabaseUser } from './utils';
+import { assignRole, getSupabaseUser } from '../utils';
 
 const CLERK_SECRET_KEY='sk_test_cV8tQDJU1mtkYiRojQaUcPITVctKwOjfCp1oZoxgdG'
 const clerkClient = createClerkClient({ secretKey: CLERK_SECRET_KEY })
@@ -39,8 +39,9 @@ export async function POST(req: NextRequest) {
     }
     
     const event = JSON.parse(body);
-    console.info('----------------PUT------------------')
+    
     if (event.type === 'user.updated') {
+      console.info('-------------PUT : user.updated---------------')
       const datos=event.data;
       
       const userId=datos.id;
@@ -48,12 +49,14 @@ export async function POST(req: NextRequest) {
       console.info('clerkId: ', userId);
       const verifyQuery = await supabase.from('usuarios').select('nombre').eq('clerkId', userId);
       var {data: verifyData, error: verifyError} = await verifyQuery;
-      if (verifyData === null || verifyData.length === 0) {
+      if (verifyError) {
         console.error(verifyError);
+        console.info(verifyError);
         return new NextResponse('User not found', { status: 404 });
       } 
         const supabaseUser = await getSupabaseUser(userId);
         if (await assignRole(userId) === false) {
+          console.error('Usuario no encontrado en supabase')
           return new NextResponse('User not found', { status: 404 });
         }
         const nombre = datos.firstName;
@@ -61,13 +64,15 @@ export async function POST(req: NextRequest) {
         let query = supabase.from('usuarios').update({ nombre: nombre, email: user.emailAddresses[0].emailAddress }).eq('clerkId', userId);
         const { data:userData, error:userError } = await query;
 
-        if (userData === null) {
+        if (userError) {
                 console.error(userError);
+                console.info(userError);
                 return new NextResponse('User not found', { status: 404 });
               } 
         return new NextResponse('User updated successfully',{status: 200});
     }
     if (event.type === 'organizationMembership.updated') {
+      console.info('----------PUT : organizationMembership.updated------------')
       const userId=event.data.public_user_data.user_id
       console.info('datos',userId)
       assignRole(userId)

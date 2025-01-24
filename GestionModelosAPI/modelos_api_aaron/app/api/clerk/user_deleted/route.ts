@@ -42,12 +42,10 @@ export async function POST(req: NextRequest) {
     console.info('Conexion a webhook correcta')
     
     const event = JSON.parse(body);
-    event
-
     
     if (event.type === 'user.deleted') {
       
-      console.log('POST Recibido');
+      console.info('POST Recibido');
       
     
     const datos=event.data;
